@@ -1,6 +1,8 @@
 import React from "react";
 import { Helmet } from "react-helmet";
 import { HelmetProvider } from "react-helmet-async";
+import Swal from "sweetalert2";
+
 
 const AddService = () => {
   const handleAddServiceBtn = (e) => {
@@ -17,17 +19,24 @@ const AddService = () => {
       serviceDescription,
       serviceImage,
     };
-    fetch(`http://localhost:5000/addservice`, {
+    fetch(`https://dentist-jishan-server.vercel.app/addservice`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
+        authorization: localStorage.getItem("token")
       },
       body: JSON.stringify(addService),
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
+        console.log(data)
+        console.log(data.acknowledged);
+        if (data.insertedId) {
+          Swal.fire("Added successfully")
+        }
       });
+
+
   };
   return (
     <HelmetProvider>

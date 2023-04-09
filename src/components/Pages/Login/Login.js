@@ -1,38 +1,64 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Helmet } from "react-helmet";
 import { AiFillFacebook } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../../Context/AuthProvider";
+import Loading from "../../Loading/Loading";
 
 const Login = () => {
-	const { SignIn, googleSignIn, setLoading } = useContext(AuthContext);
-	const Navigate = useNavigate();
+	const { user, emailSignIn, googleSignIn, setLoading, loading } = useContext(AuthContext);
+	const [loginError, setLoginError] = useState("")
+	const navigate = useNavigate();
 	const location = useLocation();
-	const from = location.from?.state?.pathname || "/";
+	const from = location.state?.from?.pathname || "/";
+	console.log(user)
+	if (user?.uid) {
+		return <Navigate to={{ from }}></Navigate>
+	}
 
+	if (loading) {
+		return <Loading></Loading>
+	}
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		const form = e.target;
 		const email = form.email.value;
 		const password = form.password.value;
-		SignIn(email, password)
+		setLoginError("")
+		emailSignIn(email, password)
 			.then((res) => {
 				const user = res.user;
-				setLoading(true);
+				console.log(user)
+				setLoading(false);
+				if (user?.uid) {
+					navigate(from, { replace: true })
+				}
 			})
-			.catch((err) => console.error(err));
+			.catch((err) => {
+				console.error(err);
+				setLoginError(err)
+			});
 	};
 	const handleGoogleSignIn = (e) => {
 		e.preventDefault();
-		googleSignIn()
-			.then((result) => {
-				const user = result.user;
-				console.log(user);
-				Navigate(from, { replace: true });
-				setLoading(true);
-			})
-			.catch((err) => console.log(err.message));
+		try {
+			googleSignIn()
+				.then((result) => {
+					const user = result.user;
+					console.log(user);
+					navigate(from, { replace: true });
+					// navigate("/")npm 
+					setLoading(false);
+				})
+				.catch((err) => {
+					console.log(err.message);
+					setLoginError(err)
+				});
+		}
+		catch (err) {
+			console.log(err)
+		}
 	};
 	return (
 		<section className="w-96 m-4 rounded-md mx-auto ">
@@ -81,7 +107,7 @@ const Login = () => {
 							/>
 						</div>
 					</div>
-					<div className="space-y-2">
+					<div className="">
 						<div>
 							<button
 								type="submit"
@@ -106,10 +132,11 @@ const Login = () => {
 								<AiFillFacebook size={"24px"}></AiFillFacebook>
 							</button>
 							<button onClick={handleGoogleSignIn}>
-								<FcGoogle size={"24px"}></FcGoogle>
+								<FcGoogle size={"22px"}></FcGoogle>
 							</button>
 						</div>
 					</div>
+					{loginError && <p className="text-red-500">{loginError.message}</p>}
 				</form>
 			</div>
 		</section>

@@ -4,49 +4,40 @@ import "react-photo-view/dist/react-photo-view.css";
 import { Link } from "react-router-dom";
 
 import { Helmet } from "react-helmet";
+import { useContext } from "react";
+import { AuthContext } from "../../../Context/AuthProvider";
+import Loading from "../../Loading/Loading";
 const Service = ({ serviceCard }) => {
+  const { loading } = useContext(AuthContext)
   const { _id, serviceName, serviceImage, serviceDescription, servicePrice } =
     serviceCard;
-
+  if (loading) {
+    return <Loading></Loading>
+  }
   return (
-    <div className="max-w-2xl rounded-md shadow-md bg-gray-50 text-gray-800">
-      <Helmet>
-        <title>Dentist Jishan-Carousel </title>
-        <meta name="description" content="This Carousel Items" />
-        <meta name="keywords" content="Dental, Service, Doctor, Teeth" />
-      </Helmet>
-      <PhotoProvider>
+    <div className="card w-80 bg-base-100 shadow-xl">
+      <figure><PhotoProvider>
         <PhotoView src={serviceImage}>
           <img
             src={serviceImage}
             alt=""
-            className="object-cover object-center w-full rounded-t-md md:h-1/2 bg-gray-500"
+            className="rounded-tl-xl rounded-tr-xl"
           />
         </PhotoView>
-      </PhotoProvider>
-
-      <div className="flex flex-col justify-between bg-sky-300 p-6 space-y-8">
-        <div className="space-y-2">
-          <h2 className="text-3xl font-semibold tracking-wide">
-            {serviceName}
-          </h2>
-          <p className="font-semibold text-green-700 text-lg">
-            Consultation Fee: {servicePrice}
-          </p>
-          <p className="text-gray-800 text-justify">
-            {serviceDescription && serviceDescription.split("", 200)}
-          </p>
+      </PhotoProvider></figure>
+      <div className="bg-gradient-to-r from-pink-300 via-purple-300 to-indigo-400 rounded-bl-xl rounded-br-xl max-h-50">
+        <h2 className="text-center text-xl font-bold bg-orange-400 shadow-md shadow-white">
+          {serviceName}
+        </h2>
+        <p className="pt-6 text-justify px-4">{serviceDescription.split("", 180)}</p>
+        <div className="pt-4">
+          <Link className="" to={`/servicedetails/${_id}`}>
+            <button className="btn btn-sm mt-0 my-4">Show Details</button>
+          </Link>
         </div>
-        <Link className="mt-4" to={`/servicedetails/${_id}`}>
-          <button
-            type="button"
-            className="flex items-center justify-center w-full p-3 font-semibold tracking-wide rounded-md bg-green-600 text-gray-50"
-          >
-            View Details
-          </button>
-        </Link>
       </div>
     </div>
+
   );
 };
 

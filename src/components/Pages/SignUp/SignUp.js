@@ -1,10 +1,13 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Helmet } from "react-helmet";
-import { Link, Navigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 import { AuthContext } from "../../../Context/AuthProvider";
 
 const SignUp = () => {
   const { SignUp, updateUserProfile, user } = useContext(AuthContext);
+  const [signUpError, setSignUpError] = useState("")
+  const navigate = useNavigate()
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -16,11 +19,11 @@ const SignUp = () => {
 
     const handleUpdateUserProfile = () => {
       const profile = {
-        name: name,
-        photoURL: photoURL,
+        name,
+        photoURL,
       };
       updateUserProfile(profile)
-        .then(() => {})
+        .then(() => { })
         .catch((error) => {
           console.error(error);
         });
@@ -29,11 +32,18 @@ const SignUp = () => {
     SignUp(email, password)
       .then((result) => {
         const user = result.user;
+        console.log(user)
         handleUpdateUserProfile();
-        form.reset();
-        Navigate("/");
+        if (user.accessToken) {
+          Swal.fire("User Created Successfully")
+          navigate("/");
+          form.reset();
+        }
       })
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        console.error(err);
+        setSignUpError(err)
+      });
   };
 
   return (
@@ -130,6 +140,7 @@ const SignUp = () => {
             </p>
           </div>
         </form>
+        {signUpError && <p className="text-red-500">{signUpError.message}</p>}
       </div>
     </section>
   );

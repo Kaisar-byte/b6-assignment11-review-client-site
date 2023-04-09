@@ -7,7 +7,7 @@ const Header = () => {
 	const { LogOut, user } = useContext(AuthContext);
 	const handleLogOut = () => {
 		LogOut()
-			.then(() => {})
+			.then(() => { })
 			.catch((err) => console.log(err));
 	};
 	return (
@@ -48,11 +48,11 @@ const Header = () => {
 						</li>
 					</ul>
 				</div>
-				<Link to="/" className="btn btn-ghost normal-case text-xl">
+				<Link to="/" className="btn btn-ghost normal-case text-xl hidden lg:block md:block">
 					Dentist Jishan
 				</Link>
 			</div>
-			<div className="navbar-center hidden lg:flex">
+			<div className="navbar-center hidden lg:flex ">
 				<ul className="menu menu-horizontal px-1">
 					{user?.email ? (
 						<>

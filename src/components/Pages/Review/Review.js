@@ -10,11 +10,14 @@ const Review = () => {
   const [myreviews, setMyreviews] = useState([]);
 
   useEffect(() => {
-    fetch(`http://localhost:5000/reviews?email=${user?.email}`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("dentist-jishan")}`,
-      },
-    })
+    fetch(
+      `https://dentist-jishan-server.vercel.app/reviews?email=${user?.email}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("dentist-jishan")}`,
+        },
+      }
+    )
       .then((res) => {
         if (res.status === 401 || res.status === 403) {
           signOut();
@@ -48,7 +51,7 @@ const Review = () => {
     });
 
     if (proceed) {
-      fetch(`http://localhost:5000/reviews/${id}`, {
+      fetch(`https://dentist-jishan-server.vercel.app/reviews/${id}`, {
         method: "DELETE",
       })
         .then((res) => res.json())
@@ -66,7 +69,7 @@ const Review = () => {
   };
 
   const handleUpdateStatus = (id) => {
-    fetch(`http://localhost:5000/reviews/${id}`, {
+    fetch(`https://dentist-jishan-server.vercel.app/reviews/${id}`, {
       method: "PATCH",
       headers: {
         "content-type": "application/json",
